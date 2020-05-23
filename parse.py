@@ -5,12 +5,12 @@ with open("cmRally.cfg", "rb") as savefile:
 
 print(len(data))
 
-laprecords = data[4092:6162]
+stage_records_chunk = data[4092:6162]
 
-record_size = 30
-n_records = len(laprecords) // record_size
+stage_record_size = 30
+n_stage_records = len(stage_records_chunk) // stage_record_size
 
-print("Found", n_records, "records")
+print("Found", n_stage_records, "records")
 
 def parse_name(byte_values):
     name = ""
@@ -22,11 +22,8 @@ def parse_name(byte_values):
 def bytes_to_short(byte_values):
     shorts = []
     for i in range(len(byte_values)//2):
-        shorts.append(byte_values[i*2] + byte_values[i*2+1]*255)
+        shorts.append(byte_values[i*2] + byte_values[i*2+1]*256)
     return shorts
-
-def ticks_to_hundredths(game_ticks):
-    return game_ticks*256//255
 
 def format_time(hundredths):
     minutes = hundredths // 6000
@@ -35,8 +32,8 @@ def format_time(hundredths):
     hundredths = hundredths - seconds*100
     return f"{minutes:02d}:{seconds:02d}.{hundredths:02d}"
     
-for i in range(n_records):
-    data_i = laprecords[record_size*i : record_size*(i+1)]
+for i in range(n_stage_records):
+    data_i = stage_records_chunk[stage_record_size*i : stage_record_size*(i+1)]
     byte_values = [int(b) for b in data_i]
 
     name, byte_values = byte_values[:12], byte_values[12:]
@@ -44,7 +41,6 @@ for i in range(n_records):
 
     split_times, byte_values = byte_values[:16], byte_values[16:]
     split_times = bytes_to_short(split_times)
-    split_times = map(ticks_to_hundredths, split_times)
     time_strings = map(format_time, split_times)
 
-    print(name, list(time_strings))
+    print(name, list(time_strings), byte_values)
