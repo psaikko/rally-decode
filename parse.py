@@ -33,7 +33,7 @@ def format_time(hundredths):
     hundredths = hundredths - minutes*6000
     seconds = hundredths // 100
     hundredths = hundredths - seconds*100
-    return f"{minutes}:{seconds}.{hundredths}"
+    return f"{minutes:02d}:{seconds:02d}.{hundredths:02d}"
     
 for i in range(n_records):
     data_i = laprecords[record_size*i : record_size*(i+1)]
