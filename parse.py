@@ -33,8 +33,7 @@ def format_time(hundredths):
     return f"{minutes:02d}:{seconds:02d}.{hundredths:02d}"
     
 for i in range(n_stage_records):
-    data_i = stage_records_chunk[stage_record_size*i : stage_record_size*(i+1)]
-    byte_values = [int(b) for b in data_i]
+    byte_values = stage_records_chunk[stage_record_size*i : stage_record_size*(i+1)]
 
     name, byte_values = byte_values[:12], byte_values[12:]
     name = parse_name(name)
@@ -44,3 +43,19 @@ for i in range(n_stage_records):
     time_strings = map(format_time, split_times)
 
     print(name, list(time_strings), byte_values)
+
+rally_chunk = data[3452:4092]
+rally_chunk_size = 16
+n_rally_records = len(rally_chunk) // rally_chunk_size
+
+for i in range(n_rally_records):
+    byte_values = rally_chunk[rally_chunk_size*i : rally_chunk_size*(i+1)]
+
+    name, byte_values = byte_values[:12], byte_values[12:]
+    name = parse_name(name)
+
+    timedata = int.from_bytes(byte_values, byteorder='little', signed=False)
+    time = (timedata & 0x000FFFFF)
+    data = (timedata & 0xFFF00000) >> 20
+
+    print(name, format_time(time), bin(data))
