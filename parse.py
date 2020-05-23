@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import struct
 
 with open("cmRally.cfg", "rb") as savefile:
     data = savefile.read()
@@ -19,12 +20,6 @@ def parse_name(byte_values):
         name += chr(val)
     return name
 
-def bytes_to_short(byte_values):
-    shorts = []
-    for i in range(len(byte_values)//2):
-        shorts.append(byte_values[i*2] + byte_values[i*2+1]*256)
-    return shorts
-
 def format_time(hundredths):
     minutes = hundredths // 6000
     hundredths = hundredths - minutes*6000
@@ -35,14 +30,12 @@ def format_time(hundredths):
 for i in range(n_stage_records):
     byte_values = stage_records_chunk[stage_record_size*i : stage_record_size*(i+1)]
 
-    name, byte_values = byte_values[:12], byte_values[12:]
+    name, split_times, metadata = byte_values[:12], byte_values[12:28], byte_values[28:]
     name = parse_name(name)
-
-    split_times, byte_values = byte_values[:16], byte_values[16:]
-    split_times = bytes_to_short(split_times)
+    split_times = struct.unpack("<"+"H"*8, split_times)
     time_strings = map(format_time, split_times)
 
-    print(name, list(time_strings), byte_values)
+    print(name, list(time_strings), metadata)
 
 rally_chunk = data[3452:4092]
 rally_chunk_size = 16
@@ -50,12 +43,10 @@ n_rally_records = len(rally_chunk) // rally_chunk_size
 
 for i in range(n_rally_records):
     byte_values = rally_chunk[rally_chunk_size*i : rally_chunk_size*(i+1)]
-
-    name, byte_values = byte_values[:12], byte_values[12:]
+    name, time_data = byte_values[:12], byte_values[12:]
     name = parse_name(name)
-
-    timedata = int.from_bytes(byte_values, byteorder='little', signed=False)
-    time = (timedata & 0x000FFFFF)
-    data = (timedata & 0xFFF00000) >> 20
+    time_data = int.from_bytes(time_data, byteorder='little', signed=False)
+    time = (time_data & 0x000FFFFF)
+    data = (time_data & 0xFFF00000) >> 20
 
     print(name, format_time(time), bin(data))
