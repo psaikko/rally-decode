@@ -71,13 +71,13 @@ CMR_STAGE_NAMES = [
 ]
 
 CMR_CAR_NAMES = {
-    21: 'Ford Escort MK II',
-    22: 'Mitsubishi Lancer E4',
-    16: 'Subaru Impreza WRC',
-    26: 'Ford Escort WRC',
-    25: 'Toyota Corolla WRC',
-    27: 'Renault Maxi Megane',
-    23: 'VW Golf GTI Kit Car',
-    18: 'Skoda Felicia Kit Car',
-    17: 'Seat Ibiza Kit Car EVO2'
+    5: 'Ford Escort MK II',
+    6: 'Mitsubishi Lancer E4',
+    0: 'Subaru Impreza WRC',
+    10: 'Ford Escort WRC',
+    9: 'Toyota Corolla WRC',
+    11: 'Renault Maxi Megane',
+    7: 'VW Golf GTI Kit Car',
+    2: 'Skoda Felicia Kit Car',
+    1: 'Seat Ibiza Kit Car EVO2'
 }

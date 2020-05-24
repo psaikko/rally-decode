@@ -60,10 +60,13 @@ for (i, stage_name) in enumerate(constants.CMR_STAGE_NAMES):
     time_strings = map(format_time, split_times)
     metadata, = struct.unpack("<H", metadata)
 
-    car_id = metadata & 0x001F
-    metadata >>= 5
+    car_id = metadata & 0x000F
+    metadata >>= 4
     if car_id in constants.CMR_CAR_NAMES:
         car_id = constants.CMR_CAR_NAMES[car_id]
+
+    player = metadata & 0x1
+    metadata >>= 1
 
     manual = metadata & 0x1
     metadata >>= 1
@@ -93,10 +96,13 @@ for i in range(n_rally_records):
     time = metadata & 0x0007FFFF
     metadata >>= 19
     
-    car_id = (metadata & 0x01F)
-    metadata >>= 5
+    car_id = (metadata & 0x00F)
+    metadata >>= 4
     if car_id in constants.CMR_CAR_NAMES:
         car_id = constants.CMR_CAR_NAMES[car_id]
+
+    player = metadata & 0x1
+    metadata >>= 1
 
     manual = metadata & 0x1
     metadata >>= 1
