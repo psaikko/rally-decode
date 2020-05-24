@@ -70,7 +70,7 @@ for (i, stage_name) in enumerate(constants.CMR_STAGE_NAMES):
     metadata >>= 1
 
     print('%13s'%rally_name, 
-        '%-5s'%stage_name, 
+        '%12s'%stage_name, 
         '%12s'%name, 
         '%71s'%' '.join(list(time_strings)),
         format(metadata, "011b"),
@@ -108,6 +108,6 @@ for i in range(n_rally_records):
         position,
         '%12s'%name, 
         format_time(time), 
-        format(metadata, "05b"), 
+        format(metadata, "06b"), 
         car_id,
         "M" if is_manual else "A")
