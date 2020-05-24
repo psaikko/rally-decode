@@ -46,29 +46,27 @@ for (i, stage_name) in enumerate(constants.CMR_STAGE_NAMES):
     if not stage_name: continue
     rally_name = constants.CMR_RALLY_NAMES[i // 7]
 
-
     byte_values = stage_records_chunk[stage_record_size*i : stage_record_size*(i+1)]
-
-    name, split_times, metadata = byte_values[:12], byte_values[12:28], byte_values[28:]
-    name = parse_name(name)
-    split_times = struct.unpack("<"+"H"*8, split_times)
+    fields = struct.unpack("<12sHHHHHHHHH", byte_values)
+    name = parse_name(fields[0])
+    split_times = fields[1:9]
+    metadata = fields[9]
 
     # Special stages have no checkpoint times
     if i in constants.CMR_SPECIAL_STAGES:
         split_times = split_times[-1:]
 
     time_strings = map(format_time, split_times)
-    metadata, = struct.unpack("<H", metadata)
 
     car_id = metadata & 0x000F
     metadata >>= 4
     if car_id in constants.CMR_CAR_NAMES:
         car_id = constants.CMR_CAR_NAMES[car_id]
 
-    player = metadata & 0x1
+    is_human = metadata & 0x1
     metadata >>= 1
 
-    manual = metadata & 0x1
+    is_manual = metadata & 0x1
     metadata >>= 1
 
     print('%13s'%rally_name, 
@@ -77,7 +75,7 @@ for (i, stage_name) in enumerate(constants.CMR_STAGE_NAMES):
         '%71s'%' '.join(list(time_strings)),
         format(metadata, "011b"),
         car_id,
-        "M" if manual else "A")
+        "M" if is_manual else "A")
 
 rally_chunk = data[3452:4092]
 rally_chunk_size = 16
@@ -90,9 +88,8 @@ for i in range(n_rally_records):
 
     byte_values = rally_chunk[rally_chunk_size*i : rally_chunk_size*(i+1)]
 
-    name, metadata = byte_values[:12], byte_values[12:]
+    name, metadata = struct.unpack("<12sI", byte_values)
     name = parse_name(name)
-    metadata = int.from_bytes(metadata, byteorder='little', signed=False)
     time = metadata & 0x0007FFFF
     metadata >>= 19
     
@@ -101,10 +98,10 @@ for i in range(n_rally_records):
     if car_id in constants.CMR_CAR_NAMES:
         car_id = constants.CMR_CAR_NAMES[car_id]
 
-    player = metadata & 0x1
+    is_human = metadata & 0x1
     metadata >>= 1
 
-    manual = metadata & 0x1
+    is_manual = metadata & 0x1
     metadata >>= 1
 
     print('%13s'%rally_name,
@@ -113,4 +110,4 @@ for i in range(n_rally_records):
         format_time(time), 
         format(metadata, "05b"), 
         car_id,
-        "M" if manual else "A")
+        "M" if is_manual else "A")
