@@ -35,6 +35,23 @@ for record in read_stage_times(game_data):
             "car": record["Car"],
             "manual": record["Manual"]
         }
-    
-    r = requests.post(api_url+"/stagetimes", json=post_data, headers={"x-api-key": api_key})
-    r.raise_for_status()
+        print(post_data)
+        r = requests.post(api_url, json=post_data, headers={"x-api-key": api_key})
+        r.raise_for_status()
+
+print("-- UPLOADING RALLY TIMES --")
+for record in read_rally_times(game_data):
+    if record["Human"]:
+        post_data = {
+            "player": record["Player"],
+            "game": "CMR",
+            "rally": record["Rally"],
+            "stage": "Rally",
+            "splits": [],
+            "time": record["Time"],
+            "car": record["Car"],
+            "manual": record["Manual"]
+        }
+        print(post_data)
+        r = requests.post(api_url, json=post_data, headers={"x-api-key": api_key})
+        r.raise_for_status()
