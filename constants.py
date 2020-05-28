@@ -25,7 +25,7 @@ CMR_STAGE_NAMES = [
     "Kariani",
     "Auli",
     "Krinides",
-    "Greece",
+    "Super-Special",
     "Charols",
     "Pradelle",
     "Serres",
@@ -39,7 +39,7 @@ CMR_STAGE_NAMES = [
     "Wongan Hills",
     "Bluff Knoll",
     "Moora",
-    "Australia",
+    "Super-Special",
     "Filipstad",
     "Lilijendal",
     "Vansbro",
@@ -53,7 +53,7 @@ CMR_STAGE_NAMES = [
     "Sermano",
     "Euisa",
     "Ajaccio",
-    "Corsica",
+    "Super-Special",
     "Gebang",
     "Bohorok",
     "Prapat",
@@ -67,7 +67,7 @@ CMR_STAGE_NAMES = [
     "Greenhow Hill",
     "F. of Bowland",
     "Dolgellau",
-    "Great Britain",
+    "Super-Special",
 ]
 
 CMR_CAR_NAMES = {
