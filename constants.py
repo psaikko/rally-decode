@@ -82,5 +82,7 @@ CMR_CAR_NAMES = {
     1: 'Seat Ibiza Kit Car EVO2',
     4: 'Ford RS200',
     8: 'Lancia Delta Integrale',
-    3: 'Audi Quattro'
+    3: 'Audi Quattro',
+    12: "Millenium 4 Rallye",
+    13: "Toyota Celica GT4 WRC"
 }
