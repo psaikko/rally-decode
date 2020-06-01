@@ -87,7 +87,7 @@ def read_rally_times(savefile_data):
             "Stage": "Rally",
             "Rank": rank,
             "Player": player_name,
-            "Time": time,
+            "Times": [time],
             "Car": constants.CMR_CAR_NAMES[car_id],
             "Manual": is_manual,
             "Human": is_human
@@ -126,7 +126,7 @@ if __name__ == "__main__":
         print('%13s' % record["Rally"],
               record["Rank"],
               '%12s' % record["Player"], 
-              format_time(record["Time"]),
+              format_time(record["Times"][0]),
               record["Car"],
               "M" if record["Manual"] else "A")
 
