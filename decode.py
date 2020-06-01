@@ -53,6 +53,7 @@ def read_stage_times(savefile_data):
         (car_id, is_manual, is_human) = parse_meta(metadata)
 
         stage_data.append({
+            'Game': 'CMR',
             'Rally': rally_name,
             'Stage': stage_name,
             'Player': player_name,
@@ -81,7 +82,9 @@ def read_rally_times(savefile_data):
         (car_id, is_manual, is_human) = parse_meta(metadata)
 
         rally_times.append({
+            "Game": "CMR",
             "Rally": rally_name,
+            "Stage": "Rally",
             "Rank": rank,
             "Player": player_name,
             "Time": time,
@@ -115,7 +118,8 @@ if __name__ == "__main__":
               '%12s' % record["Player"], 
               '%71s' % ' '.join(map(format_time, record["Times"])),
               record["Car"],
-              "M" if record["Manual"] else "A")
+              "M" if record["Manual"] else "A",
+              "H" if record["Human"] else "C")
 
     print("\n-- RALLY TIMES --")
     for record in read_rally_times(data):
