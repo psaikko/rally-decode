@@ -15,7 +15,7 @@ def create_meta(car_id, is_manual, is_human):
     meta |= manual_bit
     return meta
 
-def erase_stage_times(savefile_data):
+def clear_stage_times(savefile_data):
     data_bytearray = bytearray(savefile_data)
     stage_chunk_start = 4092
     stage_record_size = 30
@@ -30,15 +30,7 @@ def erase_stage_times(savefile_data):
         data_bytearray[stage_chunk_start + stage_record_size*i : stage_chunk_start + stage_record_size*(i+1)] = byte_values
     return bytes(data_bytearray)
 
-if __name__ == "__main__":
-    load_dotenv()
-
-    game_path = os.environ["CMR_INSTALL_PATH"]
-
-    if not game_path:
-        print("Missing environment values (see .env)")
-        exit(1)
-
+def clear_savefile(game_path):
     cfg_path = os.path.expanduser(os.path.join(game_path, "save/cmRally.cfg"))
     backup_path = os.path.expanduser(os.path.join(game_path, "save/backup.cfg"))
     # Make a backup copy of the config file. Overwrites old backup.
@@ -55,9 +47,20 @@ if __name__ == "__main__":
         print("Unexpected size %d for cmRally.cfg file" % len(data))
         exit(1)
 
-    print("Erasing")
-    print(" - stage times")
-    data = erase_stage_times(data)
+    data = clear_stage_times(data)
 
     with open(cfg_path, "wb") as savefile:
         savefile.write(data)
+
+
+if __name__ == "__main__":
+    load_dotenv()
+
+    game_path = os.environ["CMR_INSTALL_PATH"]
+
+    if not game_path:
+        print("Missing environment values (see .env)")
+        exit(1)
+
+    clear_savefile(game_path)
+    print("Erased stage times")
