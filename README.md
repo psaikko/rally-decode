@@ -26,15 +26,33 @@ Into
 
 Many games remain fun to play and compete on, but date from a time before online functionality was commonplace. This project aims to breathe some new life into some of my favorites. 
 
-The included `upload.py` script will, given an API key and url, automatically upload the decoded records to an [online leaderboard](https://github.com/psaikko/rally-leaderboard).
-
 ## Games supported
 
 ### [Colin McRae Rally](https://www.pcgamingwiki.com/wiki/Colin_McRae_Rally)
 
-`python3 decode.py <path to cmRally.cfg>` 
+#### `python3 decode.py <path to cmRally.cfg>` 
 
-Reads the binary configuration file and outputs leaderboard times in plain text.
+Reads a binary configuration file and outputs leaderboard times in plain text.
+
+#### `python3 configure.py` 
+
+Prompts you to set the required environment variables.
+
+#### `python3 upload.py` 
+
+Automatically decodes and uploads records to an [online leaderboard](https://github.com/psaikko/rally-leaderboard).
+
+#### `python3 erase.py`
+
+Erases local stage high scores.
+
+#### `python3 launch-game.py`
+
+Wrapper script for other functions. 
+1. Uploads existing high scores
+2. Erases the local leaderboard
+3. Launches the game
+4. Uploads new times
 
 ### [Colin McRae Rally 2.0](https://www.pcgamingwiki.com/wiki/Colin_McRae_Rally_2.0)
 

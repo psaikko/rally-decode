@@ -28,6 +28,7 @@ if not IS_WINDOWS and shutil.which("wine") == None:
     exit(1)
 
 try:
+    upload_times(API_URL, API_KEY, GAME_DIR)
     clear_savefile(GAME_DIR)
 
     cmd = [EXE_PATH]
