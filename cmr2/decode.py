@@ -42,10 +42,11 @@ def read_stage_times(savefile_data):
     print(n_stage_records)
 
     stage_data = []
-    for (i, stage_name) in enumerate(range(n_stage_records)):
+    for (i, stage_name) in enumerate(constants.CMR2_STAGE_NAMES):
+
+        if not stage_name: continue
 
         rally_name = constants.CMR2_RALLY_NAMES[i // 11]
-        stage_name = "???"
 
         byte_values = stage_records_chunk[stage_record_size*i : stage_record_size*(i+1) - 1]
 
@@ -61,7 +62,41 @@ def read_stage_times(savefile_data):
         stage_data.append({
             'Game': 'CMR2',
             'Rally': rally_name,
-            "Stage": constants.CMR2_STAGE_NAMES[i],
+            "Stage": stage_name,
+            'Player': player_name,
+            'Splits': splits,
+            'Time': stage_time,
+            'Meta': bin(metadata)
+        })
+    return stage_data
+
+def read_arcade_times(savefile_data):
+    arcade_records_chunk = savefile_data[4788:4854]
+    arcade_record_size = 8
+
+    arcade_splits_chunk = savefile_data[4860:]
+    split_record_size = 12
+
+    n_arcade_records = len(arcade_records_chunk) // arcade_record_size
+
+    stage_data = []
+    for i in range(n_arcade_records):
+
+        byte_values = arcade_records_chunk[arcade_record_size*i : arcade_record_size*(i+1) - 1]
+
+        split_bytes = arcade_splits_chunk[split_record_size*i : split_record_size*(i+1)]
+
+        fields = struct.unpack("<3sL", byte_values)
+        player_name = parse_name(fields[0])
+        stage_time = fields[1] >> 15
+        metadata = (fields[1] >> 8 & 0x7F)
+
+        splits = struct.unpack("<HHHHHH", split_bytes)
+
+        stage_data.append({
+            'Game': 'CMR2',
+            'Rally': "Arcade",
+            "Stage": constants.CMR2_ARCADE_STAGES[i],
             'Player': player_name,
             'Splits': splits,
             'Time': stage_time,
@@ -120,6 +155,15 @@ if __name__ == "__main__":
     for record in read_stage_times(data):
         print('%15s' % record["Rally"], 
               '%13s' % record["Stage"], 
+              '%4s' % record["Player"], 
+              '%9s' % format_time(record["Time"]),
+              '%70s' % ' '.join(map(format_time, record["Splits"])),
+              '%10s' % record["Meta"])
+
+    print("-- ARCADE TIMES --")
+    for record in read_arcade_times(data):
+        print('%7s' % record["Rally"], 
+              '%15s' % record["Stage"], 
               '%4s' % record["Player"], 
               '%9s' % format_time(record["Time"]),
               '%70s' % ' '.join(map(format_time, record["Splits"])),
