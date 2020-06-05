@@ -57,6 +57,9 @@ def read_stage_times(savefile_data):
         stage_time = fields[1] >> 15
         metadata = (fields[1] >> 8 & 0x7F)
 
+        car = constants.CMR2_CAR_NAMES[metadata & 0x0F]
+        automatic = metadata & 0x40
+
         splits = struct.unpack("<HHHHHHHH", split_bytes[2:-2])
 
         stage_data.append({
@@ -66,7 +69,8 @@ def read_stage_times(savefile_data):
             'Player': player_name,
             'Splits': splits,
             'Time': stage_time,
-            'Meta': bin(metadata)
+            'Car': car,
+            'Manual': not automatic
         })
     return stage_data
 
@@ -91,6 +95,9 @@ def read_arcade_times(savefile_data):
         stage_time = fields[1] >> 15
         metadata = (fields[1] >> 8 & 0x7F)
 
+        car = constants.CMR2_CAR_NAMES[metadata & 0x0F]
+        automatic = metadata & 0x40
+
         splits = struct.unpack("<HHHHHH", split_bytes)
 
         stage_data.append({
@@ -100,7 +107,8 @@ def read_arcade_times(savefile_data):
             'Player': player_name,
             'Splits': splits,
             'Time': stage_time,
-            'Meta': bin(metadata)
+            'Car': car,
+            'Manual': not automatic
         })
     return stage_data
 
@@ -158,7 +166,8 @@ if __name__ == "__main__":
               '%4s' % record["Player"], 
               '%9s' % format_time(record["Time"]),
               '%70s' % ' '.join(map(format_time, record["Splits"])),
-              '%10s' % record["Meta"])
+              '%10s' % record["Car"],
+              'M' if record['Manual'] else 'A')
 
     print("-- ARCADE TIMES --")
     for record in read_arcade_times(data):
@@ -167,7 +176,8 @@ if __name__ == "__main__":
               '%4s' % record["Player"], 
               '%9s' % format_time(record["Time"]),
               '%70s' % ' '.join(map(format_time, record["Splits"])),
-              '%10s' % record["Meta"])
+              '%10s' % record["Car"],
+              'M' if record['Manual'] else 'A')
 
     print("\n-- RALLY TIMES --")
     for record in read_rally_times(data):
