@@ -118,5 +118,7 @@ CMR2_CAR_NAMES = {
     0b0100 : "Mitsubishi Lancer",
     0b0000 : "Ford Focus",
     0b1001 : "Subaru Impreza",
-    0b1000 : "Toyota Corolla"
+    0b1000 : "Toyota Corolla",
+    0b0111 : "Lancer Road Car",
+    0b1011 : "Seat Cordoba"   
 }
