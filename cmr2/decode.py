@@ -113,32 +113,46 @@ def read_arcade_times(savefile_data):
     return stage_data
 
 def read_rally_times(savefile_data):
-    rally_chunk = savefile_data[3452:4092]
-    rally_chunk_size = 16
-    n_rally_records = len(rally_chunk) // rally_chunk_size
+    rally_chunk = savefile_data[344:1784]
+    rally_chunk_size = 12
+    # n_rally_records = len(rally_chunk) // rally_chunk_size
     rally_times = []
-    for i in range(n_rally_records):
-        rally_name = constants.CMR2_RALLY_NAMES[i // 5]
+
+    n_difficulties = 3
+    n_rallies = len(constants.CMR2_RALLY_NAMES)
+    n_times_per_rally = 5
+
+    for i in range(n_difficulties * n_rallies * n_times_per_rally):
+        i_rally = i // (n_difficulties * n_times_per_rally)
+        i_difficulty = i % (n_difficulties * n_times_per_rally) // n_times_per_rally
         rank = (i % 5) + 1
 
+        rally_name = constants.CMR2_RALLY_NAMES[i_rally]
         byte_values = rally_chunk[rally_chunk_size*i : rally_chunk_size*(i+1)]
 
-        player_name, metadata = struct.unpack("<12sI", byte_values)
-        player_name = parse_name(player_name)
-        time = metadata & 0x0007FFFF
-        metadata >>= 19
-        (car_id, is_manual, is_human) = parse_meta(metadata)
+        fields = struct.unpack("<4sHHHH", byte_values)
+        player_name = parse_name(fields[0])
+        metadata = fields[1:]
+        # time = metadata & 0x0007FFFF
+        # metadata >>= 19
+        # (car_id, is_manual, is_human) = parse_meta(metadata)
+
+        def pad_to(s, n):
+            if len(s) == n: return s
+            else: return '0'*(n -len(s)) + s
 
         rally_times.append({
             "Game": "CMR2",
             "Rally": rally_name,
             "Stage": "Rally",
+            "Difficulty": i_difficulty+1,
             "Rank": rank,
             "Player": player_name,
-            "Times": [time >> 8],
-            "Car": constants.CMR2_CAR_NAMES[car_id],
-            "Manual": is_manual,
-            "Human": is_human
+            "Meta": ''.join(list(pad_to(x[2:], 16) for x in map(bin, metadata)))
+            # "Times": [time >> 8],
+            # "Car": constants.CMR2_CAR_NAMES[car_id],
+            # "Manual": is_manual,
+            # "Human": is_human
         })
     return rally_times
         
@@ -181,12 +195,11 @@ if __name__ == "__main__":
 
     print("\n-- RALLY TIMES --")
     for record in read_rally_times(data):
-        print('%13s' % record["Rally"],
+        print('%13s' % record["Rally"], 
+              record["Difficulty"],
               record["Rank"],
-              '%12s' % record["Player"], 
-              format_time(record["Times"][0]),
-              record["Car"],
-              "M" if record["Manual"] else "A")
+              '%12s' % record["Player"],
+              record["Meta"])
 
     
 
