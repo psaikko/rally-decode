@@ -15,7 +15,7 @@ def parse_name(byte_values):
     return name
 
 def parse_meta(meta):
-    car_id = meta & 0b0001111
+    car_id = meta & 0b0011111
     automatic = meta & 0b1000000
     return (car_id, not automatic)
 
@@ -84,6 +84,7 @@ def read_arcade_times(savefile_data):
         split_bytes = arcade_splits_chunk[split_record_size*i : split_record_size*(i+1)]
 
         fields = struct.unpack("<3sL", byte_values)
+
         player_name = parse_name(fields[0])
         stage_time = fields[1] >> 15
 

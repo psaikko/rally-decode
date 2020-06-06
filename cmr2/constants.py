@@ -114,11 +114,12 @@ CMR2_STAGE_NAMES = [
 ]
 
 CMR2_CAR_NAMES = {
-    0b1010 : "Peugeot 206",
-    0b0100 : "Mitsubishi Lancer",
-    0b0000 : "Ford Focus",
-    0b1001 : "Subaru Impreza",
-    0b1000 : "Toyota Corolla",
-    0b0111 : "Lancer Road Car",
-    0b1011 : "Seat Cordoba"   
+    0b01010 : "Peugeot 206",
+    0b00100 : "Mitsubishi Lancer",
+    0b00000 : "Ford Focus",
+    0b01001 : "Subaru Impreza",
+    0b01000 : "Toyota Corolla",
+    0b00111 : "Lancer Road Car",
+    0b01011 : "SEAT Cordoba",
+    0b10000 : "Mini Cooper S"
 }
