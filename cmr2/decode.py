@@ -39,8 +39,6 @@ def read_stage_times(savefile_data):
 
     n_stage_records = len(stage_records_chunk) // stage_record_size
 
-    print(n_stage_records)
-
     stage_data = []
     for (i, stage_name) in enumerate(constants.CMR2_STAGE_NAMES):
 
@@ -70,7 +68,8 @@ def read_stage_times(savefile_data):
             'Splits': splits,
             'Time': stage_time,
             'Car': car,
-            'Manual': not automatic
+            'Manual': not automatic,
+            "Human": player_name != "cmr"
         })
     return stage_data
 
@@ -108,7 +107,8 @@ def read_arcade_times(savefile_data):
             'Splits': splits,
             'Time': stage_time,
             'Car': car,
-            'Manual': not automatic
+            'Manual': not automatic,
+            "Human": player_name != "cmr"
         })
     return stage_data
 
@@ -130,16 +130,16 @@ def read_rally_times(savefile_data):
         rally_name = constants.CMR2_RALLY_NAMES[i_rally]
         byte_values = rally_chunk[rally_chunk_size*i : rally_chunk_size*(i+1)]
 
-        fields = struct.unpack("<4sHHHH", byte_values)
-        player_name = parse_name(fields[0])
-        metadata = fields[1:]
+        name, meta, time = struct.unpack("<4sHxxI", byte_values)
+        player_name = parse_name(name)
+
+        car_id = meta & 0b0001111
+        automatic = meta & 0b1000000
+        meta >>= 15 
+
         # time = metadata & 0x0007FFFF
         # metadata >>= 19
         # (car_id, is_manual, is_human) = parse_meta(metadata)
-
-        def pad_to(s, n):
-            if len(s) == n: return s
-            else: return '0'*(n -len(s)) + s
 
         rally_times.append({
             "Game": "CMR2",
@@ -148,11 +148,10 @@ def read_rally_times(savefile_data):
             "Difficulty": i_difficulty+1,
             "Rank": rank,
             "Player": player_name,
-            "Meta": ''.join(list(pad_to(x[2:], 16) for x in map(bin, metadata)))
-            # "Times": [time >> 8],
-            # "Car": constants.CMR2_CAR_NAMES[car_id],
-            # "Manual": is_manual,
-            # "Human": is_human
+            "Times": [time],
+            "Car": constants.CMR2_CAR_NAMES[car_id],
+            "Manual": not automatic,
+            "Human": player_name != "cmr"
         })
     return rally_times
         
@@ -175,32 +174,34 @@ if __name__ == "__main__":
 
     print("-- STAGE TIMES --")
     for record in read_stage_times(data):
-        print('%15s' % record["Rally"], 
-              '%13s' % record["Stage"], 
-              '%4s' % record["Player"], 
-              '%9s' % format_time(record["Time"]),
-              '%70s' % ' '.join(map(format_time, record["Splits"])),
-              '%10s' % record["Car"],
-              'M' if record['Manual'] else 'A')
+        if record["Human"]:
+            print('%15s' % record["Rally"], 
+                '%13s' % record["Stage"], 
+                '%4s' % record["Player"], 
+                '%9s' % format_time(record["Time"]),
+                '%70s' % ' '.join(map(format_time, record["Splits"])),
+                '%10s' % record["Car"],
+                'M' if record['Manual'] else 'A')
 
     print("-- ARCADE TIMES --")
     for record in read_arcade_times(data):
-        print('%7s' % record["Rally"], 
-              '%15s' % record["Stage"], 
-              '%4s' % record["Player"], 
-              '%9s' % format_time(record["Time"]),
-              '%70s' % ' '.join(map(format_time, record["Splits"])),
-              '%10s' % record["Car"],
-              'M' if record['Manual'] else 'A')
+        if record["Human"]:
+            print('%7s' % record["Rally"], 
+                '%15s' % record["Stage"], 
+                '%4s' % record["Player"], 
+                '%9s' % format_time(record["Time"]),
+                '%70s' % ' '.join(map(format_time, record["Splits"])),
+                '%10s' % record["Car"],
+                'M' if record['Manual'] else 'A')
 
     print("\n-- RALLY TIMES --")
     for record in read_rally_times(data):
-        print('%13s' % record["Rally"], 
-              record["Difficulty"],
-              record["Rank"],
-              '%12s' % record["Player"],
-              record["Meta"])
+        if record["Human"]:    
+            print('%15s' % record["Rally"], 
+                record["Difficulty"],
+                record["Rank"],
+                '%12s' % record["Player"],
+                '%9s' % format_time(record["Times"][0]),
+                '%10s' % record["Car"],
+                'M' if record['Manual'] else 'A')
 
-    
-
-    
