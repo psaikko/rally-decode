@@ -14,14 +14,10 @@ def parse_name(byte_values):
         name += chr(val)
     return name
 
-def parse_meta(data):
-    car_id = data & 0x000F
-    data >>= 4
-    is_human = data & 0x1
-    data >>= 1
-    is_manual = data & 0x1
-    data >>= 1
-    return (car_id, is_manual, is_human)
+def parse_meta(meta):
+    car_id = meta & 0b0001111
+    automatic = meta & 0b1000000
+    return (car_id, not automatic)
 
 def format_time(hundredths):
     minutes = hundredths // 6000
@@ -53,10 +49,8 @@ def read_stage_times(savefile_data):
         fields = struct.unpack("<3sL", byte_values)
         player_name = parse_name(fields[0])
         stage_time = fields[1] >> 15
-        metadata = (fields[1] >> 8 & 0x7F)
 
-        car = constants.CMR2_CAR_NAMES[metadata & 0x0F]
-        automatic = metadata & 0x40
+        car_id, is_manual = parse_meta(fields[1] >> 8)
 
         splits = struct.unpack("<HHHHHHHH", split_bytes[2:-2])
 
@@ -67,8 +61,8 @@ def read_stage_times(savefile_data):
             'Player': player_name,
             'Splits': splits,
             'Time': stage_time,
-            'Car': car,
-            'Manual': not automatic,
+            'Car': constants.CMR2_CAR_NAMES[car_id],
+            'Manual': is_manual,
             "Human": player_name != "cmr"
         })
     return stage_data
@@ -92,22 +86,20 @@ def read_arcade_times(savefile_data):
         fields = struct.unpack("<3sL", byte_values)
         player_name = parse_name(fields[0])
         stage_time = fields[1] >> 15
-        metadata = (fields[1] >> 8 & 0x7F)
 
-        car = constants.CMR2_CAR_NAMES[metadata & 0x0F]
-        automatic = metadata & 0x40
+        car_id, is_manual = parse_meta(fields[1] >> 8)
 
         splits = struct.unpack("<HHHHHH", split_bytes)
 
         stage_data.append({
             'Game': 'CMR2',
-            'Rally': "Arcade",
-            "Stage": constants.CMR2_ARCADE_STAGES[i],
+            'Rally': constants.CMR2_ARCADE_RALLIES[i],
+            "Stage": "Arcade",
             'Player': player_name,
             'Splits': splits,
             'Time': stage_time,
-            'Car': car,
-            'Manual': not automatic,
+            'Car': constants.CMR2_CAR_NAMES[car_id],
+            'Manual': is_manual,
             "Human": player_name != "cmr"
         })
     return stage_data
@@ -115,7 +107,6 @@ def read_arcade_times(savefile_data):
 def read_rally_times(savefile_data):
     rally_chunk = savefile_data[344:1784]
     rally_chunk_size = 12
-    # n_rally_records = len(rally_chunk) // rally_chunk_size
     rally_times = []
 
     n_difficulties = 3
@@ -133,13 +124,7 @@ def read_rally_times(savefile_data):
         name, meta, time = struct.unpack("<4sHxxI", byte_values)
         player_name = parse_name(name)
 
-        car_id = meta & 0b0001111
-        automatic = meta & 0b1000000
-        meta >>= 15 
-
-        # time = metadata & 0x0007FFFF
-        # metadata >>= 19
-        # (car_id, is_manual, is_human) = parse_meta(metadata)
+        car_id, is_manual = parse_meta(meta)
 
         rally_times.append({
             "Game": "CMR2",
@@ -150,7 +135,7 @@ def read_rally_times(savefile_data):
             "Player": player_name,
             "Times": [time],
             "Car": constants.CMR2_CAR_NAMES[car_id],
-            "Manual": not automatic,
+            "Manual": is_manual,
             "Human": player_name != "cmr"
         })
     return rally_times

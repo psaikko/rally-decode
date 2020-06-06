@@ -11,7 +11,7 @@ CMR2_RALLY_NAMES = [
 
 CMR2_SPECIAL_STAGES = [13, 27, 41, 55]
 
-CMR2_ARCADE_STAGES = [
+CMR2_ARCADE_RALLIES = [
     "Italy",
     "Sweden",
     "Greece",
