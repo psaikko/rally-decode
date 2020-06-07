@@ -123,3 +123,9 @@ CMR2_CAR_NAMES = {
     0b01011 : "SEAT Cordoba",
     0b10000 : "Mini Cooper S"
 }
+
+DIFFICULTIES = [
+    "Novice",
+    "Intermediate",
+    "Expert"
+]

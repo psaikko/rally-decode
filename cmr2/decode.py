@@ -117,6 +117,7 @@ def read_rally_times(savefile_data):
     for i in range(n_difficulties * n_rallies * n_times_per_rally):
         i_rally = i // (n_difficulties * n_times_per_rally)
         i_difficulty = i % (n_difficulties * n_times_per_rally) // n_times_per_rally
+        difficulty = constants.DIFFICULTIES[i_difficulty]
         rank = (i % 5) + 1
 
         rally_name = constants.CMR2_RALLY_NAMES[i_rally]
@@ -130,8 +131,7 @@ def read_rally_times(savefile_data):
         rally_times.append({
             "Game": "CMR2",
             "Rally": rally_name,
-            "Stage": "Rally",
-            "Difficulty": i_difficulty+1,
+            "Stage": f"Rally-{difficulty}",
             "Rank": rank,
             "Player": player_name,
             "Times": [time],
@@ -183,8 +183,8 @@ if __name__ == "__main__":
     print("\n-- RALLY TIMES --")
     for record in read_rally_times(data):
         if record["Human"]:    
-            print('%15s' % record["Rally"], 
-                record["Difficulty"],
+            print('%15s' % record["Rally"],
+                '%10s' % record["Stage"], 
                 record["Rank"],
                 '%12s' % record["Player"],
                 '%9s' % format_time(record["Times"][0]),
