@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 import struct
-import constants
+from . import constants
 import os.path as path
 import sys
 
 def helptext():
-    print(f"Usage: `python3 {sys.argv[0]} <path to cmRally.cfg>`")
+    print(f"Usage: `python3 {sys.argv[0]} <path to GameInfo.rcf>`")
 
 def parse_name(byte_values):
     name = ""
@@ -59,8 +59,7 @@ def read_stage_times(savefile_data):
             'Rally': rally_name,
             "Stage": stage_name,
             'Player': player_name,
-            'Splits': splits,
-            'Time': stage_time,
+            'Times': splits,
             'Car': constants.CMR2_CAR_NAMES[car_id],
             'Manual': is_manual,
             "Human": player_name != "cmr"
@@ -90,15 +89,15 @@ def read_arcade_times(savefile_data):
 
         car_id, is_manual = parse_meta(fields[1] >> 8)
 
-        splits = struct.unpack("<HHHHHH", split_bytes)
+        splits = struct.unpack("<xxHHHxxxx", split_bytes)
+        splits += (stage_time,)
 
         stage_data.append({
             'Game': 'CMR2',
             'Rally': constants.CMR2_ARCADE_RALLIES[i],
             "Stage": "Arcade",
             'Player': player_name,
-            'Splits': splits,
-            'Time': stage_time,
+            'Times': list(splits),
             'Car': constants.CMR2_CAR_NAMES[car_id],
             'Manual': is_manual,
             "Human": player_name != "cmr"
@@ -141,22 +140,26 @@ def read_rally_times(savefile_data):
         })
     return rally_times
         
+def read_save_bytes(fp):
+    if not path.exists(fp):
+        print(fp, "not found")
+        exit(1)
+
+    with open(fp, "rb") as savefile:
+        data = savefile.read()
+
+    if not len(data) == 14748:
+        print("Unexpected size for GameInfo.rcf")
+        exit(1)
+
+    return data
 
 if __name__ == "__main__":
     if not len(sys.argv) == 2:
         helptext()
         exit(1)
 
-    if not path.exists(sys.argv[1]):
-        helptext()
-        exit(1)
-
-    with open(sys.argv[1], "rb") as savefile:
-        data = savefile.read()
-
-    if not len(data) == 14748:
-        helptext()
-        exit(1)
+    data = read_save_bytes(sys.argv[1])
 
     print("-- STAGE TIMES --")
     for record in read_stage_times(data):
@@ -164,8 +167,8 @@ if __name__ == "__main__":
             print('%15s' % record["Rally"], 
                 '%13s' % record["Stage"], 
                 '%4s' % record["Player"], 
-                '%9s' % format_time(record["Time"]),
-                '%70s' % ' '.join(map(format_time, record["Splits"])),
+                '%9s' % format_time(record["Times"][-1]),
+                '%70s' % ' '.join(map(format_time, record["Times"])),
                 '%10s' % record["Car"],
                 'M' if record['Manual'] else 'A')
 
@@ -175,8 +178,8 @@ if __name__ == "__main__":
             print('%7s' % record["Rally"], 
                 '%15s' % record["Stage"], 
                 '%4s' % record["Player"], 
-                '%9s' % format_time(record["Time"]),
-                '%70s' % ' '.join(map(format_time, record["Splits"])),
+                '%9s' % format_time(record["Times"][-1]),
+                '%70s' % ' '.join(map(format_time, record["Times"])),
                 '%10s' % record["Car"],
                 'M' if record['Manual'] else 'A')
 

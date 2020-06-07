@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import struct
-import constants
+from . import constants
 import os.path as path
 import sys
 
@@ -94,22 +94,26 @@ def read_rally_times(savefile_data):
         })
     return rally_times
         
+def read_save_bytes(fp):
+    if not path.exists(fp):
+        print(fp, "not found")
+        exit(1)
+
+    with open(fp, "rb") as savefile:
+        data = savefile.read()
+
+    if not len(data) == 7712:
+        print("Unexpected size for cmRally.cfg")
+        exit(1)
+
+    return data
 
 if __name__ == "__main__":
     if not len(sys.argv) == 2:
         helptext()
         exit(1)
 
-    if not path.exists(sys.argv[1]):
-        helptext()
-        exit(1)
-
-    with open(sys.argv[1], "rb") as savefile:
-        data = savefile.read()
-
-    if not len(data) == 7712:
-        helptext()
-        exit(1)
+    data = read_save_bytes(sys.argv[1])
 
     print("-- STAGE TIMES --")
     for record in read_stage_times(data):
