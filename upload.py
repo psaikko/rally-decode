@@ -21,23 +21,23 @@ def upload_cmr(api_url, api_key, game_path):
     cfg_path = os.path.expanduser(os.path.join(game_path, "save/cmRally.cfg"))
     game_data = cmr.decode.read_save_bytes(cfg_path)
 
-    print("-- UPLOADING STAGE TIMES --")
+    print("-- UPLOADING CMR STAGE TIMES --")
     upload_times(api_url, api_key, cmr.decode.read_stage_times(game_data))
 
-    print("-- UPLOADING RALLY TIMES --")
+    print("-- UPLOADING CMR RALLY TIMES --")
     upload_times(api_url, api_key, cmr.decode.read_rally_times(game_data))
 
 def upload_cmr2(api_url, api_key, game_path):
     cfg_path = os.path.expanduser(os.path.join(game_path, "Configuration/GameInfo.rcf"))
     game_data = cmr2.decode.read_save_bytes(cfg_path)
 
-    print("-- UPLOADING STAGE TIMES --")
+    print("-- UPLOADING CMR2 STAGE TIMES --")
     upload_times(api_url, api_key, cmr2.decode.read_stage_times(game_data))
 
-    print("-- UPLOADING ARCADE TIMES --")
+    print("-- UPLOADING CMR2 ARCADE TIMES --")
     upload_times(api_url, api_key, cmr2.decode.read_arcade_times(game_data))
 
-    print("-- UPLOADING RALLY TIMES --")
+    print("-- UPLOADING CMR2 RALLY TIMES --")
     upload_times(api_url, api_key, cmr2.decode.read_rally_times(game_data))
 
 def upload_times(api_url, api_key, records):
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     cmr2_path = os.environ["CMR2_INSTALL_PATH"]
 
     if not api_key or not api_url or not (cmr_path or cmr2_path):
-        print("Missing environment values (see .env)")
+        print("Missing environment values (see configure.py)")
         exit(1)
 
     if cmr_path:
