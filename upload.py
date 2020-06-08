@@ -52,14 +52,13 @@ def upload_times(api_url, api_key, records):
         if record["Human"] and h not in uploaded_hashes:
             splits = record["Times"]
             time = splits[-1]
-            if len(splits) < 2: splits = []
             post_data = {
                 "player": record["Player"],
                 "game": record["Game"],
                 "rally": record["Rally"],
                 "stage": record["Stage"],
                 "splits": splits,
-                "time": time,
+                "time": splits[-1],
                 "car": record["Car"],
                 "manual": record["Manual"]
             }
