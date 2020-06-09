@@ -9,7 +9,7 @@ CMR2_RALLY_NAMES = [
     "United Kingdom"
 ]
 
-CMR2_SPECIAL_STAGES = [13, 27, 41, 55]
+CMR2_SPECIAL_STAGES = [21, 43, 65, 87]
 
 CMR2_ARCADE_RALLIES = [
     "Italy",

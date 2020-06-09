@@ -53,6 +53,7 @@ def read_stage_times(savefile_data):
         car_id, is_manual = parse_meta(fields[1] >> 8)
 
         splits = struct.unpack("<HHHHHHHH", split_bytes[2:-2])
+        if i in constants.CMR2_SPECIAL_STAGES: splits = splits[:2]
 
         stage_data.append({
             'Game': 'CMR2',
