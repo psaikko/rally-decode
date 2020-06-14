@@ -2,6 +2,11 @@
 
 Reverse-engineering leaderboard data from old PC rally games.
 
+```
+pip3 install -r requirements.txt
+python3 configure.py
+```
+
 ## What?
 
 Converts binary encoded save data into a human-readable format.
