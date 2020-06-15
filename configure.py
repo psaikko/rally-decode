@@ -6,9 +6,9 @@ api_url = input("API URL: ")
 api_key = input("API Key: ")
 
 with open(".env", "w") as f:
-    print(f"""\
-LEADERBOARD_API_URL="{api_url}"
-LEADERBOARD_API_KEY="{api_key}"
-CMR_INSTALL_PATH="{cmr_path}"
-CMR2_INSTALL_PATH="{cmr2_path}"
-""", end='', file=f)
+    print("""\
+LEADERBOARD_API_URL="%s"
+LEADERBOARD_API_KEY="%s"
+CMR_INSTALL_PATH="%s"
+CMR2_INSTALL_PATH="%s"
+""" % (api_url, api_key, cmr_path, cmr2_path), end='', file=f)
