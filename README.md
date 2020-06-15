@@ -2,9 +2,15 @@
 
 Reverse-engineering leaderboard data from old PC rally games.
 
+## TL;DR
+
+Clone this repository, install required packages, and configure variables. 
+Ask for API key and URL from maintainer. Help for finding game install directory [here](https://www.pcgamingwiki.com/wiki/Glossary:Game_data#Installation_folder).
+
 ```
 pip3 install -r requirements.txt
 python3 configure.py
+python3 upload.py
 ```
 
 ## What?
